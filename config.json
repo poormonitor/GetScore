@@ -1,6 +1,8 @@
 {
-  "tencent_id": "",
-  "tencent_key": "",
-  "id": "",
-  "passwd": ""
+  "tencent_id": "腾讯云SecretId",
+  "tencent_key": "腾讯云SecretKey",
+  "id": "身份证号",
+  "passwd": "教育考试院网站密码",
+  "smms_key":"sm.ms key",
+  "serverchan_key":"serverchan key"
 }
