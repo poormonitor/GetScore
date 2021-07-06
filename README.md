@@ -3,7 +3,7 @@
 
 欢迎使用GetScore，本项目旨在快速从浙江省教育考试院获取你的考试成绩。
 
-本项目使用Selenium模拟浏览器行为，腾讯云提供的API作验证码识别
+本项目使用Selenium模拟浏览器行为，腾讯云提供的API作验证码识别，sm.ms作为截图图床，Serverchan作推送。
 
 ## Usage
 
@@ -21,7 +21,7 @@
 
 3. 修改config.json
 
-   其中，tencent_id和tencent_key为你在腾讯云申请的id和key，id为教育考试院注册用的身份证号，passwd为你的密码。
+   其中，tencent_id和tencent_key为你在腾讯云申请的id和key，id为教育考试院注册用的身份证号，passwd为你的密码。smms_key为sm.ms授予的api key，serverchan_key为serverchan的api key。
 
 4. 运行
 
@@ -33,7 +33,7 @@
 
 5. 查看
 
-   在result.png中存有相应的屏幕截图，而index.html中是查分界面的网页代码。
+   消息会被推送至Serverchan配置的消息通道中。
 
 ## License 
 
