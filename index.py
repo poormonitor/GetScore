@@ -1,8 +1,10 @@
 import base64
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 from PIL import Image
 from io import BytesIO
 import os
+import cv2 as cv
 import json
 
 
@@ -28,14 +30,27 @@ def rec(image, tencent_id, tencent_key):
     resp = client.GeneralBasicOCR(req)
     txt = json.loads(resp.to_json_string())[
         "TextDetections"][0]["DetectedText"]
-    return txt
+    return txt.replace(" ", "")
+
+def pre_process(image):
+    image.save("temp.png")
+    img = cv.imread("temp.png")
+    blur = cv.pyrMeanShiftFiltering(img, sp=8, sr=60)
+    gray = cv.cvtColor(blur, cv.COLOR_BGR2GRAY)
+    ret, binary = cv.threshold(gray, 185, 255, cv.THRESH_BINARY_INV)
+    cv.bitwise_not(binary, binary)
+    cv.imwrite("temp.png", binary)
+    processed = Image.open("temp.png")
+    return processed
 
 
 if __name__ == "__main__":
     with open("config.json", "r") as fp:
         config = json.loads(fp.read())
-    driver = webdriver.Firefox()
-    driver.set_window_size(1280, 720)
+    options = Options()
+    options.add_argument('--headless')
+    driver = webdriver.Firefox(options=options)
+    driver.set_window_size(1366, 768)
     driver.get("https://pgzy.zjzs.net:4431/login.htm")
     id = config["id"]
     passwd = config["passwd"]
@@ -45,9 +60,15 @@ if __name__ == "__main__":
     driver.find_element_by_name("mima").send_keys(passwd)
     driver.save_screenshot("screenshot.png")
     image = Image.open("screenshot.png")
-    cropped = image.crop((1009, 236, 1128, 288))
+    element = driver.find_element_by_id("imgVerify")
+    left = element.location['x']
+    top = element.location['y']
+    right = element.location['x'] + element.size['width']
+    bottom = element.location['y'] + element.size['height']
+    cropped = image.crop((left, top, right, bottom))
+    processed = pre_process(cropped)
     output_buffer = BytesIO()
-    cropped.save(output_buffer, format='PNG')
+    processed.save(output_buffer, format='PNG')
     byte_data = output_buffer.getvalue()
     image = base64.b64encode(byte_data).decode('ascii')
     yzm = rec(image, tencent_id, tencent_key)
@@ -58,5 +79,6 @@ if __name__ == "__main__":
     driver.get_screenshot_as_file("result.png")
     driver.quit()
     os.remove("screenshot.png")
+    os.remove("temp.png")
     with open("index.html", "w") as fp:
         fp.write(source)
