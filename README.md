@@ -11,7 +11,7 @@
    
    a. 注册腾讯云并开启OCR功能，获得id和key。
    
-   b. sm.ms（图床）和sct.ftqq.com（ServerChan推送）注册账号并配置。
+   b. sm.ms（图床）和 sct.ftqq.com（ServerChan推送）注册账号并配置。
 
 1. Clone本项目
 
